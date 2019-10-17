@@ -163,16 +163,35 @@ load("mapa_base")
 mapa_base <- merge(x=mapa_base,y = amendoim,by = "NM_ESTADO")
 
 
+<<<<<<< HEAD
+grafico_mapa <- dados_mapa %>%
+  # filter(Data == 2000) %>%
+  ggplot(aes(group = Data)) +
+  geom_sf(aes_string(fill="NM_ESTADO",frame="Data"))+
+  # geom_sf_text_repel(aes(label = TaxaHomicidio))+
+  geom_sf_text(aes(label = round(Valores,digits = 1)),fontface = "bold")+
+=======
 grafico_mapa <- mapa_base %>%
   filter(Anos == as.Date.character("01-01-2004","%d-%m-%Y")) %>%
   ggplot(aes(group = Anos)) +
   geom_sf(aes(fill=ProducaoAmendoim,frame = Anos))+
   # geom_sf_text_repel(aes(label = TaxaHomicidio))+
   geom_sf_text(aes(label = round(ProducaoAmendoim,digits = 1)),fontface = "bold")+
+>>>>>>> c1c7c8747a9b448309baa3a67b5eb7c7e47a100f
   # geom_text_repel(aes(label = scales::percent(TaxaHomicidio,suffix = "%"),))+
   ggtitle("Produção anual de amendoim com casca\n em toneladas")+
   labs(caption = "Fonte: Ipeadata. Elaboração: Pedro Henrique Oliveira",
        subtitle = "Ano: {closest_state}")+
+<<<<<<< HEAD
+  theme_minimal()
+  # scale_fill_viridis_c(option = "inferno",
+                       # values = c(0,2),
+                       # end = 0,
+                       # begin = 1,
+                       # aesthetics = c("color","fill"),
+  #                      # guide = guide_colorbar(frame.colour = "#1b1b1b",ticks.colour = "#1b1b1b"))
+  scale_fill_viridis_d()
+=======
   theme_minimal()+
   scale_fill_viridis_c(option = "inferno",
                        values = c(0,2),
@@ -180,5 +199,6 @@ grafico_mapa <- mapa_base %>%
                        begin = 1,
                        aesthetics = c("color","fill"),
                        guide = guide_colorbar(frame.colour = "#1b1b1b",ticks.colour = "#1b1b1b"))
+>>>>>>> c1c7c8747a9b448309baa3a67b5eb7c7e47a100f
 
 grafico_mapa+tema

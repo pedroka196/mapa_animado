@@ -58,3 +58,58 @@ gerador_base_mapa <- function(estados,batimento){
 }
 
 
+gerador_mapa_visual <- function(base,variavel,nome,fonte,tipo_escala){
+  
+  
+  grafico_mapa <- base %>%
+    # filter(Data == 2000) %>%
+    ggplot(aes(group = Data)) #+
+  if(missing(variavel)){
+    variavel = "Valores"
+    count(unique(base[variavel]))
+  }
+  discreto <- as.data.frame(base) %>%
+    select(variavel)
+   
+  discreto.count <- nrow(unique(discreto))
+    grafico_mapa <- grafico_mapa +
+      geom_sf(aes_string(fill=variavel,frame = "Data"),data = base)+
+      geom_sf_text(aes(label = round(Valores,digits = 1)),fontface = "bold")
+  
+  grafico_mapa <- grafico_mapa+
+    ggtitle(nome)+
+    labs(caption = fonte,
+         subtitle = "Ano: {closest_state}")+
+    theme_minimal()
+  if(tipo_escala == "continua"){
+    grafico_mapa <- grafico_mapa + scale_fill_gradient(low = grDevices::heat.colors(17)[15],
+                                                       high = grDevices::heat.colors(17)[1],
+                                                       guide = guide_colorbar(frame.colour = "#1b1b1b",ticks.colour = "#1b1b1b"))
+  }
+  if(tipo_escala == "discreta"){
+    # grafico_mapa <-
+      grafico_mapa + scale_color_discrete_sequential(grDevices::heat.colors(discreto.count))
+  }
+
+    
+  
+  tema <- theme(#line = element_line(color = "#1b1b1b"),
+    # line = element_blank(),
+    # axis.line.x = element_line(),
+    # axis.line.y = element_line(),
+    title = element_text(family = "Calibri",size = 14,hjust=0.5,face = "bold"),
+    plot.margin = unit(c(0.5,1,0.5,0.5),"cm"),
+    plot.subtitle = element_text(family = "Calibri",hjust=0.5,size = 17,face = "bold"),
+    plot.caption = element_text(family = "Calibri",hjust=0.5,size = 10,face = "bold"),
+    legend.key = element_blank(),
+    legend.title = element_blank(),
+    panel.background  = element_rect(fill = "#4ea1c6"),
+    panel.grid = element_line(colour = "#aed5e7",size = 0.3),
+    panel.border = element_blank(),
+    axis.title = element_blank(),
+    axis.line = element_blank())
+  
+  
+  return(grafico_mapa+tema)
+  
+}
