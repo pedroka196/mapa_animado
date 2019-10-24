@@ -11,6 +11,8 @@ library(transformr)
 library(scales)
 library(png)
 library(ggsflabel)
+
+source("funcoes.R")
 # library(broom)
 # require("rgdal") # requires sp, will use proj.4 if installed
 # require("maptools")
@@ -33,13 +35,16 @@ dados <- organiza_base_estados(homicidios_base2,"Anos")
 
 # plotar gráficos do brasil
 homicidios_base2 <- read.xlsx("homicidios.xlsx",sheetIndex = 2,encoding = "UTF-8")
-homicidios_base <- homicidios_base %>%
-  gather(key = Estados,value = TaxaHomicidio,-Anos) %>%
-  mutate(Estados = toupper(Estados)) %>%
-  mutate(Estados = gsub(pattern = "\\.",replacement = " ",x = Estados)) %>%
-  mutate(Estados = gsub("Ă","Ã",Estados))
 
-names(homicidios_base) <- c("Anos","NM_ESTADO","TaxaHomicidio")
+base_homicidio <- organiza_base_estados(homicidios_base2,variavel_separada = "Anos")
+base_homicidio <- gerador_base_mapa(estados = base_homicidio,batimento = "estados")
+mapa_homicidios <- gerador_mapa_visual(base = base_homicidio,
+                                       nome = "Taxa de homicídios de 1981 a 2017",
+                                       fonte = "IpeaData",
+                                       tipo_escala = "discreta",
+                                       variavel = "Valores")
+
+mapa_homicidios_animado <- gerador_animacao(grafico = mapa_homicidios,duracao = 10)
 
 # Espírito santo dá erro
 homicidios_base$NM_ESTADO = ifelse(homicidios_base$NM_ESTADO=="ESPÍRITO SANTO","ESPIRITO SANTO",homicidios_base$NM_ESTADO)
@@ -163,26 +168,25 @@ load("mapa_base")
 mapa_base <- merge(x=mapa_base,y = amendoim,by = "NM_ESTADO")
 
 
-<<<<<<< HEAD
+
 grafico_mapa <- dados_mapa %>%
   # filter(Data == 2000) %>%
   ggplot(aes(group = Data)) +
   geom_sf(aes_string(fill="NM_ESTADO",frame="Data"))+
   # geom_sf_text_repel(aes(label = TaxaHomicidio))+
   geom_sf_text(aes(label = round(Valores,digits = 1)),fontface = "bold")+
-=======
-grafico_mapa <- mapa_base %>%
+
+  grafico_mapa <- mapa_base %>%
   filter(Anos == as.Date.character("01-01-2004","%d-%m-%Y")) %>%
   ggplot(aes(group = Anos)) +
   geom_sf(aes(fill=ProducaoAmendoim,frame = Anos))+
   # geom_sf_text_repel(aes(label = TaxaHomicidio))+
   geom_sf_text(aes(label = round(ProducaoAmendoim,digits = 1)),fontface = "bold")+
->>>>>>> c1c7c8747a9b448309baa3a67b5eb7c7e47a100f
   # geom_text_repel(aes(label = scales::percent(TaxaHomicidio,suffix = "%"),))+
   ggtitle("Produção anual de amendoim com casca\n em toneladas")+
   labs(caption = "Fonte: Ipeadata. Elaboração: Pedro Henrique Oliveira",
        subtitle = "Ano: {closest_state}")+
-<<<<<<< HEAD
+
   theme_minimal()
   # scale_fill_viridis_c(option = "inferno",
                        # values = c(0,2),
@@ -191,7 +195,6 @@ grafico_mapa <- mapa_base %>%
                        # aesthetics = c("color","fill"),
   #                      # guide = guide_colorbar(frame.colour = "#1b1b1b",ticks.colour = "#1b1b1b"))
   scale_fill_viridis_d()
-=======
   theme_minimal()+
   scale_fill_viridis_c(option = "inferno",
                        values = c(0,2),
@@ -199,6 +202,6 @@ grafico_mapa <- mapa_base %>%
                        begin = 1,
                        aesthetics = c("color","fill"),
                        guide = guide_colorbar(frame.colour = "#1b1b1b",ticks.colour = "#1b1b1b"))
->>>>>>> c1c7c8747a9b448309baa3a67b5eb7c7e47a100f
 
 grafico_mapa+tema
+load("mapa_base")

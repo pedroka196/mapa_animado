@@ -14,6 +14,7 @@ library(ggsflabel)
 # Organizacao das bases
 organiza_base_estados <- function(base,variavel_separada){
   nomes <- names(base)
+  nomes <- iconv(nomes,to="ASCII//TRANSLIT")
   nomes[match(variavel_separada,nomes)] <- "Data"
   cat(names(base[,1]))
   names(base) <- nomes
@@ -22,7 +23,7 @@ organiza_base_estados <- function(base,variavel_separada){
     gather(key = Estados,value = Valores,-Data) %>%
     mutate(Estados = toupper(Estados)) %>%
     mutate(Estados = gsub(pattern = "\\.",replacement = " ",x = Estados)) %>%
-    mutate(Estados = gsub("Ă","Ã",Estados))
+    mutate(Estados = gsub("Ă","A",Estados))
   return(base)
 }
 
@@ -88,7 +89,7 @@ gerador_mapa_visual <- function(base,variavel,nome,fonte,tipo_escala){
   }
   if(tipo_escala == "discreta"){
     # grafico_mapa <-
-      grafico_mapa + scale_color_discrete_sequential(grDevices::heat.colors(discreto.count))
+      # grafico_mapa + scale_color_discrete_sequential(grDevices::heat.colors(discreto.count))
   }
 
     
@@ -113,3 +114,48 @@ gerador_mapa_visual <- function(base,variavel,nome,fonte,tipo_escala){
   return(grafico_mapa+tema)
   
 }
+
+gerador_animacao <- function(grafico,frames_per_sec,duracao,horizontal,vertical,pausa_inicial,pausa_final){
+  # Se faltar informacoes
+  if(missing(vertical)){
+    vertical = 1000
+  }
+  if(missing(horizontal)){
+    horizontal = 1000
+  }
+  if(missing(pausa_inicial)){
+    pausa_inicial = 0
+  }
+  if(missing(pausa_final)){
+    pausa_final = 0
+  }
+  if(missing(duracao)){
+    duracao = 10
+  }
+  if(missing(frames_per_sec)){
+    frames_per_sec = 12
+  }
+  if(missing(grafico)){
+    stop("NÃO TEM GRÁFICO")
+  }
+  
+  
+  
+  cat("antes do grafico mapa")
+  grafico_mapa = grafico + transition_states(Data)
+  cat("depois do grafico mapa")
+  # animate(grafico_mapa, fps = frames_per_sec,duration = duracao)
+  grafico_mapa_animado <- animate(grafico_mapa,
+                                  fps = frames_per_sec,
+                                  duration = frames_per_sec,
+                                  height = vertical,
+                                  width = horizontal,
+                                  start_pause = pausa_inicial,
+                                  end_pause = pausa_final)
+  
+  anim_save(filename = "mapa01.gif",animation = grafico_mapa_animado)
+  
+  return(grafico_mapa_animado)
+}
+
+teste_animado <- gerador_animacao(grafico = mapa_homicidios)

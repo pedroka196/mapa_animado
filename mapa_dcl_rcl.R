@@ -126,3 +126,4 @@ grafico_mapa = grafico_mapa +
 grafico_mapa_animado <- animate(grafico_mapa,fps = 1,duration = 21,height = 600,width = 800,start_pause = 1,end_pause = 1)
 
 anim_save(filename = "dcl_rcl.gif",animation = grafico_mapa_animado)
+
