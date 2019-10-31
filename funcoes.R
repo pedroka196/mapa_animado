@@ -32,7 +32,7 @@ gerador_base_mapa <- function(estados,batimento){
   load("mapa_base")
   if(exists("batimento")==T){
     batimento <- tolower(batimento)
-    if(!(batimento %in% c("estados","sigla"))){
+    if(!(batimento %in% c("estados","siglas"))){
       stop("OPÇÕES DE BATIMENTO NÃO POSSÍVEIS")
     }
   }
@@ -43,17 +43,17 @@ gerador_base_mapa <- function(estados,batimento){
   if(batimento == "estados"){
     names(estados) <- c("Data","NM_ESTADO","Valores")
     base <- merge(x = mapa_base, y = estados, by = "NM_ESTADO",all.x=T)
-    itens_faltantes <- mapa_base$NM_ESTADO %in% base$NM_ESTADO
+    # itens_faltantes <- mapa_base$NM_ESTADO %in% base$NM_ESTADO
   }
   if(batimento == "siglas"){
     names(estados) <- c("Data","NM_SIGLAS","Valores")
-    base <- merge(x = mapa_base, y = estados, by = "NM_SIGLAS")
-    itens_faltantes <-base$NM_ESTADO %in% mapa_base$NM_ESTADO
+    base <- merge(x = mapa_base, y = estados, by = "NM_SIGLAS",all.x=T)
+    # itens_faltantes <-base$NM_SIGLAS %in% mapa_base$NM_SIGLAS
   }
-  cat(NROW(base)/27, " Observações\n")
-  statistica <- count(is.na(base$Valores))
-  cat(statistica$freq[1]," observações NA são",statistica$x[1], "\n")
-  cat(statistica$freq[2]," observações NA são",statistica$x[2], "\n")
+  # cat(NROW(base)/27, " Observações\n")
+  # statistica <- count(is.na(base$Valores))
+  # cat(statistica$freq[1]," observações NA são",statistica$x[1], "\n")
+  # cat(statistica$freq[2]," observações NA são",statistica$x[2], "\n")
   return(base)
   
 }
@@ -147,7 +147,7 @@ gerador_animacao <- function(grafico,frames_per_sec,duracao,horizontal,vertical,
   # animate(grafico_mapa, fps = frames_per_sec,duration = duracao)
   grafico_mapa_animado <- animate(grafico_mapa,
                                   fps = frames_per_sec,
-                                  duration = frames_per_sec,
+                                  duration = duracao,
                                   height = vertical,
                                   width = horizontal,
                                   start_pause = pausa_inicial,
